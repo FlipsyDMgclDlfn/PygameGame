@@ -20,7 +20,11 @@ clock = pygame.time.Clock()
 
 
 def text_objects(text, font, *args):
-    textSurface = font.render(text, True, black)
+    if *args:
+        color = args
+    else:
+        clor = black
+    textSurface = font.render(text, True, color)
     return textSurface, textSurface.get_rect()
 
 def button(name, x, number, cost):
@@ -114,7 +118,6 @@ def game_loop():
         textRect.center = (50,417)
         gameDisplay.blit(textSurf, textRect)
         smallText = pygame.font.Font("freesansbold.ttf",15)
-        ##smallText = font.fontRender(white)
         textSurf, textRect = text_objects((str(health) + "/" + str(maxHealth)), smallText)
         textRect.center = (129,450)
         gameDisplay.blit(textSurf, textRect)        

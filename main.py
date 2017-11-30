@@ -20,10 +20,10 @@ clock = pygame.time.Clock()
 
 
 def text_objects(text, font, *args):
-    if *args:
+    if args == True:
         color = args
     else:
-        clor = black
+        color = black
     textSurface = font.render(text, True, color)
     return textSurface, textSurface.get_rect()
 

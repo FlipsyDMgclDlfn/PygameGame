@@ -8,7 +8,7 @@ display_width = 800
 display_height = 600
 
 black = (0,0,0)
-white = (255,255,255)
+white = (255,255,255,1)
 red = (200,0,0)
 green = (0,200,0)
 bright_green = (0,255,0)
@@ -19,11 +19,7 @@ gameDisplay = pygame.display.set_mode((display_width,display_height))
 clock = pygame.time.Clock()
 
 
-def text_objects(text, font, *args):
-    if args == True:
-        color = args
-    else:
-        color = black
+def text_objects(text, font, color):
     textSurface = font.render(text, True, color)
     return textSurface, textSurface.get_rect()
 
@@ -49,15 +45,15 @@ def button(name, x, number, cost):
         cost = "NaN"
         suf = ""
     smallText = pygame.font.Font("freesansbold.ttf",15)
-    textSurf, textRect = text_objects(name, smallText)
+    textSurf, textRect = text_objects(name, smallText,black)
     textRect.center = ( (x+(100/2)), (500+(100/4)) )
     gameDisplay.blit(textSurf, textRect)
     smallText = pygame.font.Font("freesansbold.ttf",15)
-    textSurf, textRect = text_objects(str(number), smallText)
+    textSurf, textRect = text_objects(str(number), smallText,black)
     textRect.center = ( (x+(100/2)), (500+(2*100/4)) )
     gameDisplay.blit(textSurf, textRect)
     smallText = pygame.font.Font("freesansbold.ttf",10)
-    textSurf, textRect = text_objects(("cost: "+str(cost)+suf), smallText)
+    textSurf, textRect = text_objects(("cost: "+str(cost)+suf), smallText,black)
     textRect.center = ( (x+(100/2)), (500+(3*100/4)) )
     gameDisplay.blit(textSurf, textRect)
 
@@ -114,11 +110,11 @@ def game_loop():
         pygame.draw.rect(gameDisplay, black,(25,430,204,40))
         pygame.draw.rect(gameDisplay, bright_red, (27,432,200*(health/maxHealth),36))
         smallText = pygame.font.Font("freesansbold.ttf",15)
-        textSurf, textRect = text_objects(("Health"), smallText,white)
+        textSurf, textRect = text_objects("Health", smallText,black)
         textRect.center = (50,417)
         gameDisplay.blit(textSurf, textRect)
         smallText = pygame.font.Font("freesansbold.ttf",15)
-        textSurf, textRect = text_objects((str(health) + "/" + str(maxHealth)), smallText)
+        textSurf, textRect = text_objects((str(health) + "/" + str(maxHealth)), smallText,white)
         textRect.center = (129,450)
         gameDisplay.blit(textSurf, textRect)        
     ##Bottom Row
@@ -131,7 +127,7 @@ def game_loop():
         else:
             pygame.draw.rect(gameDisplay, green,(0,500,100,100))
         smallText = pygame.font.Font("freesansbold.ttf",15)
-        textSurf, textRect = text_objects(str(round(power)), smallText)
+        textSurf, textRect = text_objects(str(round(power)), smallText,black)
         textRect.center = ( (100/2), (500+(100/2)) )
         gameDisplay.blit(textSurf, textRect)
 

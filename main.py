@@ -23,10 +23,10 @@ def text_objects(text, font, color):
     textSurface = font.render(text, True, color)
     return textSurface, textSurface.get_rect()
 
-def button(name, x, number, cost):
+def suf(x,d):
     for i in range(0,5):
-        if cost >= 1000:
-            cost = cost/1000
+        if x >= 1000:
+            x = x/1000
         else:
             break
     if i == 0:
@@ -44,16 +44,20 @@ def button(name, x, number, cost):
     else:
         cost = "NaN"
         suf = ""
+    return(str(round(x,d)) + suf)
+
+def button(name, x, number, cost):
+    
     smallText = pygame.font.Font("freesansbold.ttf",15)
     textSurf, textRect = text_objects(name, smallText,black)
     textRect.center = ( (x+(100/2)), (500+(100/4)) )
     gameDisplay.blit(textSurf, textRect)
     smallText = pygame.font.Font("freesansbold.ttf",15)
-    textSurf, textRect = text_objects(str(number), smallText,black)
+    textSurf, textRect = text_objects(suf(number,0), smallText,black)
     textRect.center = ( (x+(100/2)), (500+(2*100/4)) )
     gameDisplay.blit(textSurf, textRect)
     smallText = pygame.font.Font("freesansbold.ttf",10)
-    textSurf, textRect = text_objects(("cost: "+str(cost)+suf), smallText,black)
+    textSurf, textRect = text_objects(("cost: "+suf(cost,1)), smallText,black)
     textRect.center = ( (x+(100/2)), (500+(3*100/4)) )
     gameDisplay.blit(textSurf, textRect)
 
@@ -116,19 +120,19 @@ def game_loop():
         textRect.center = (50,417)
         gameDisplay.blit(textSurf, textRect)
         smallText = pygame.font.Font("freesansbold.ttf",15)
-        textSurf, textRect = text_objects((str(round(health)) + "/" + str(round(maxHealth))), smallText,white)
+        textSurf, textRect = text_objects((suf(health,0) + "/" + suf(maxHealth,0)), smallText,white)
         textRect.center = (129,450)
         gameDisplay.blit(textSurf, textRect)
         
         ##Power Counter
         smallText = pygame.font.Font("freesansbold.ttf",15)
-        textSurf, textRect = text_objects("Power: " + str(round(power)), smallText,black)
+        textSurf, textRect = text_objects("Power: " + suf(power,0), smallText,black)
         textRect = (250,422)
         gameDisplay.blit(textSurf, textRect)
         
         ##PowerPS
         smallText = pygame.font.Font("freesansbold.ttf",15)
-        textSurf, textRect = text_objects("Power Ps: " + str(round(powerPS,1)), smallText,black)
+        textSurf, textRect = text_objects("Power Ps: " + suf(powerPS,1), smallText,black)
         textRect = (250,444)
         gameDisplay.blit(textSurf, textRect)
         
@@ -148,7 +152,7 @@ def game_loop():
         else:
             pygame.draw.rect(gameDisplay, green,(0,500,100,100))
         smallText = pygame.font.Font("freesansbold.ttf",15)
-        textSurf, textRect = text_objects("+ " + str(powerInc), smallText,black)
+        textSurf, textRect = text_objects("+ " + suf(powerInc,0), smallText,black)
         textRect.center = ( (100/2), (500+(100/2)) )
         gameDisplay.blit(textSurf, textRect)
 

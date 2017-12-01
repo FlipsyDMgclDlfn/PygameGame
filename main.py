@@ -196,15 +196,15 @@ def game_loop():
                 walking = False
                 walkingR = 0
         if playerH < maxH and rise == True:
-            playerY -= 1
-            playerH += 1
+            playerY -= 2
+            playerH += 2
         elif playerH == maxH:
             rise = False
-            playerY += 1
-            playerH -= 1
+            playerY += 2
+            playerH -= 2
         elif playerH > 0:
-            playerY += 1
-            playerH -= 1
+            playerY += 2
+            playerH -= 2
         else:
             inAir = False
             

@@ -104,11 +104,13 @@ def game_loop():
         
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
+        
     ##Stat Row
         pygame.draw.rect(gameDisplay, brown,(0,400,800,100))
+        
         ##Health Bar
         pygame.draw.rect(gameDisplay, black,(25,430,204,40))
-        pygame.draw.rect(gameDisplay, bright_red, (27,432,200*(round(health/maxHealth)),36))
+        pygame.draw.rect(gameDisplay, bright_red, (27,432,200*(health/maxHealth),36))
         smallText = pygame.font.Font("freesansbold.ttf",15)
         textSurf, textRect = text_objects("Health", smallText,black)
         textRect.center = (50,417)
@@ -117,11 +119,25 @@ def game_loop():
         textSurf, textRect = text_objects((str(round(health)) + "/" + str(round(maxHealth))), smallText,white)
         textRect.center = (129,450)
         gameDisplay.blit(textSurf, textRect)
+        
         ##Power Counter
         smallText = pygame.font.Font("freesansbold.ttf",15)
         textSurf, textRect = text_objects("Power: " + str(round(power)), smallText,black)
-        textRect.center = (300,450)
+        textRect = (250,422)
         gameDisplay.blit(textSurf, textRect)
+        
+        ##PowerPS
+        smallText = pygame.font.Font("freesansbold.ttf",15)
+        textSurf, textRect = text_objects("Power Ps: " + str(round(powerPS,1)), smallText,black)
+        textRect = (250,444)
+        gameDisplay.blit(textSurf, textRect)
+        
+        ##Gold
+        smallText = pygame.font.Font("freesansbold.ttf",15)
+        textSurf, textRect = text_objects("Gold: " + str(gold), smallText,black)
+        textRect = (250,466)
+        gameDisplay.blit(textSurf, textRect)
+        
     ##Bottom Row
         ##Clicker
         if 100 > mouse[0] > 0 and 500+100 > mouse[1] > 500:
@@ -132,7 +148,7 @@ def game_loop():
         else:
             pygame.draw.rect(gameDisplay, green,(0,500,100,100))
         smallText = pygame.font.Font("freesansbold.ttf",15)
-        textSurf, textRect = text_objects(str(round(power)), smallText,black)
+        textSurf, textRect = text_objects("+ " + str(powerInc), smallText,black)
         textRect.center = ( (100/2), (500+(100/2)) )
         gameDisplay.blit(textSurf, textRect)
 

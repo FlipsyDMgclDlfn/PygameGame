@@ -106,17 +106,22 @@ def game_loop():
         click = pygame.mouse.get_pressed()
     ##Stat Row
         pygame.draw.rect(gameDisplay, brown,(0,400,800,100))
-        #Health Bar
+        ##Health Bar
         pygame.draw.rect(gameDisplay, black,(25,430,204,40))
-        pygame.draw.rect(gameDisplay, bright_red, (27,432,200*(health/maxHealth),36))
+        pygame.draw.rect(gameDisplay, bright_red, (27,432,200*(round(health/maxHealth)),36))
         smallText = pygame.font.Font("freesansbold.ttf",15)
         textSurf, textRect = text_objects("Health", smallText,black)
         textRect.center = (50,417)
         gameDisplay.blit(textSurf, textRect)
         smallText = pygame.font.Font("freesansbold.ttf",15)
-        textSurf, textRect = text_objects((str(health) + "/" + str(maxHealth)), smallText,white)
+        textSurf, textRect = text_objects((str(round(health)) + "/" + str(round(maxHealth))), smallText,white)
         textRect.center = (129,450)
-        gameDisplay.blit(textSurf, textRect)        
+        gameDisplay.blit(textSurf, textRect)
+        ##Power Counter
+        smallText = pygame.font.Font("freesansbold.ttf",15)
+        textSurf, textRect = text_objects("Power: " + str(round(power)), smallText,black)
+        textRect.center = (300,450)
+        gameDisplay.blit(textSurf, textRect)
     ##Bottom Row
         ##Clicker
         if 100 > mouse[0] > 0 and 500+100 > mouse[1] > 500:

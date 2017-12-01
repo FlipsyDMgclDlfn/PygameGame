@@ -264,7 +264,7 @@ def game_loop():
                 pygame.draw.rect(gameDisplay, red,(600,500,100,100))
         button("Helper6",600,helper6,helper6C)
 
-        ##Helper67
+        ##Helper7
         if gold >= helper7C:
             pygame.draw.rect(gameDisplay, green,(700,500,100,100))
         else:

@@ -198,7 +198,7 @@ def game_loop():
         else:
             pygame.draw.rect(gameDisplay, red,(300,500,100,100))
         if 300 + 100 > mouse[0] > 300 and 500+100 > mouse[1] > 500:
-            if gold >= helper2C:
+            if gold >= helper3C:
                 pygame.draw.rect(gameDisplay, bright_green,(300,500,100,100))
                 if click[0] == 1 and not down:
                     powerPS += 50
@@ -216,7 +216,7 @@ def game_loop():
         else:
             pygame.draw.rect(gameDisplay, red,(400,500,100,100))
         if 400 + 100 > mouse[0] > 400 and 500+100 > mouse[1] > 500:
-            if gold >= helper2C:
+            if gold >= helper4C:
                 pygame.draw.rect(gameDisplay, bright_green,(400,500,100,100))
                 if click[0] == 1 and not down:
                     powerPS += 500

@@ -15,10 +15,27 @@ bright_green = (0,255,0)
 bright_red = (255,0,0)
 brown = (204,153,51)
 
+playerImgL = pygame.image.load('pc_fl.png')
+playerImgR = pygame.image.load('pc_fr.png')
+playerImgWL1 = pygame.image.load('pc_wl1.png')
+playerImgWL2 = pygame.image.load('pc_wl2.png')
+playerImgWL3 = pygame.image.load('pc_wl3.png')
+playerImgWL4 = pygame.image.load('pc_wl4.png')
+playerImgWL5 = pygame.image.load('pc_wl5.png')
+playerImgWL6 = pygame.image.load('pc_wl6.png')
+playerImgWR1 = pygame.image.load('pc_wr1.png')
+playerImgWR2 = pygame.image.load('pc_wr2.png')
+playerImgWR3 = pygame.image.load('pc_wr3.png')
+playerImgWR4 = pygame.image.load('pc_wr4.png')
+playerImgWR5 = pygame.image.load('pc_wr5.png')
+playerImgWR6 = pygame.image.load('pc_wr6.png')
+
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 clock = pygame.time.Clock()
 
-
+def player(x,y,s):
+    gameDisplay.blit(s,(x,y))
+    
 def text_objects(text, font, color):
     textSurface = font.render(text, True, color)
     return textSurface, textSurface.get_rect()
@@ -65,6 +82,19 @@ def game_loop():
 
     gameExit = False
     ticks = 0
+    level = 1
+    
+    playerX = 100
+    playerY = 368
+    playerS = playerImgR
+
+    inAir = False
+    rise = False
+    playerH = 0
+    maxH = 0
+    
+    walking = False
+    walkingL = 0
     
     power = 0
     powerInc = 1
@@ -97,13 +127,90 @@ def game_loop():
     down = False
  
     while not gameExit:
- 
+
+        gameDisplay.fill(white)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
 
-        gameDisplay.fill(white)
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                if not inAir:
+                    maxH = 100
+                    inAir = True
+                    playerH = 0
+                    rise = True
+            if event.key == pygame.K_a:
+                if not walking:
+                    walking = True
+                    walkingL = 1
+                if walkingL < 2:
+                    playerS = playerImgWL1
+                    walkingL+=.2
+                elif walkingL < 3:
+                    playerS = playerImgWL2
+                    walkingL+=.2
+                elif walkingL < 4:
+                    playerS = playerImgWL3
+                    walkingL+=.2
+                elif walkingL < 5:
+                    playerS = playerImgWL4
+                    walkingL+=.2
+                elif walkingL < 6:
+                    playerS = playerImgWL5
+                    walkingL+=.2
+                elif walkingL < 7:
+                    walkingL = 1
+                    playerS = playerImgWL6
+            if event.key == pygame.K_d:
+                if not walking:
+                    walking = True
+                    walkingR = 1
+                if walkingR < 2:
+                    playerS = playerImgWR1
+                    walkingR+=.2
+                elif walkingR < 3:
+                    playerS = playerImgWR2
+                    walkingR+=.2
+                elif walkingR < 4:
+                    playerS = playerImgWR3
+                    walkingR+=.2
+                elif walkingR < 5:
+                    playerS = playerImgWR4
+                    walkingR+=.2
+                elif walkingR < 6:
+                    playerS = playerImgWR5
+                    walkingR+=.2 
+                elif walkingR < 7:
+                    walkingR = 1
+                    playerS = playerImgWR6
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_a:
+                playerS = playerImgL
+                walking = False
+                walkingL = 0
+            if event.key == pygame.K_d:
+                playerS = playerImgR
+                walking = False
+                walkingR = 0
+        if playerH < maxH and rise == True:
+            playerY -= 1
+            playerH += 1
+        elif playerH == maxH:
+            rise = False
+            playerY += 1
+            playerH -= 1
+        elif playerH > 0:
+            playerY += 1
+            playerH -= 1
+        else:
+            inAir = False
+            
+        player(playerX,playerY,playerS)
+            
+
         ##other screen stuff
         
         mouse = pygame.mouse.get_pos()

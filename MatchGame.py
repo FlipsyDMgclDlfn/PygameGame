@@ -6,6 +6,8 @@ import time
 class MatchGame():    
     
     def __init__(self):
+        self.back = PhotoImage(file="cardback.gif")
+        
         self.turns = 0
         self.matches = 0
         self.buttons = []
@@ -14,7 +16,7 @@ class MatchGame():
         self.match2 = 0
         self.match1Button = 0
         self.match2Button = 0
-        self.wasMatch = False
+        self.wasMatch = True
         master.title((str(self.matches),"matches"))
         k = 0
         temp = 0
@@ -29,10 +31,7 @@ class MatchGame():
                 k += 1
                 
     def makeButton(self,num,i,j):
-        img = PhotoImage(file="cardback.gif")
-        p = Button(master, image=img, command=lambda: self.match(num,i,j))
-        ##p.grid(row=i,column=j,padx=0,pady=0)
-        ##p.configure(image=img)
+        p = Button(master, image=self.back, command=lambda: self.match(num,i,j))
         p.grid(row=i,column=j,padx=0,pady=0)
         self.buttons += [p]
         
@@ -75,6 +74,15 @@ class MatchGame():
 master = Tk()
 game = MatchGame()
 mainloop()
+
+
+
+
+
+
+
+
+
 
 
 

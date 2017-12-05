@@ -46,7 +46,7 @@ class MatchGame():
         self.match1Button = 0
         self.match2Button = 0
         self.wasMatch = True
-        master.title((str(self.matches),"matches"))
+        master.title((str(self.matches)+" matches and "+ str(self.turns)+ " turns!"))
         k = 0
         temp = 0
         self.r = []
@@ -120,18 +120,18 @@ class MatchGame():
             img = self.koh
         if self.a == 0:
             if not self.wasMatch:
-                self.buttons[self.match2Button].configure(state=NORMAL,image=self.back)#, text = " ")
-                self.buttons[self.match1Button].configure(state=NORMAL,image=self.back)#, text = " ")
+                self.buttons[self.match2Button].configure(state=NORMAL,image=self.back)
+                self.buttons[self.match1Button].configure(state=NORMAL,image=self.back)
             self.wasMatch = False
             self.match1 = self.r[x]
-            self.buttons[x].configure(state=DISABLED,image=img)#, text = self.r[x])
+            self.buttons[x].configure(state=DISABLED,image=img)
             self.match1Button = x
             self.match1Buttonx = i
             self.match1Buttony = j
             self.a += 1
         else:
             self.match2 = self.r[x]
-            self.buttons[x].configure(state=DISABLED,image=img)#, text = self.r[x])
+            self.buttons[x].configure(state=DISABLED,image=img)
             self.match2Button = x
             self.match2Buttonx = i
             self.match2Buttony = j
@@ -142,10 +142,10 @@ class MatchGame():
             print("It's a match")
             self.wasMatch = True
             self.matches += 1
-            master.title((str(self.matches),"matches"))
         else:
             print("Not a match, try again!")
             self.turns += 1
+        master.title((str(self.matches)+ " matches and "+ str(self.turns)+ " turns!"))
         self.a = 0
         self.match1 = 0
         self.match2 = 0
@@ -155,6 +155,25 @@ class MatchGame():
 master = Tk()
 game = MatchGame()
 mainloop()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

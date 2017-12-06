@@ -33,6 +33,22 @@ playerImgWR6 = pygame.image.load('pc_wr6.png')
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 clock = pygame.time.Clock()
 
+class Enemy:
+    def __init__(self,l,s):
+        self.side = s
+        if s == 0:
+            self.move = 2
+            self.image = pygame.image.load('pc_fr.png')
+        else:
+            self.move = -2
+            self.image = pygame.image.load('pc_fl.png')
+        self.health = 10 * l
+        self.x = s*display_width
+    def draw(self):
+        self.x += self.move
+        if self.health > 0:
+            gameDisplay.blit(self.image,(self.x-8,368))
+            
 def player(x,y,s):
     gameDisplay.blit(s,(x,y))
     
@@ -87,7 +103,7 @@ def game_loop():
     playerX = 100
     playerY = 368
     playerS = playerImgR
-
+    dx = 0
     inAir = False
     rise = False
     playerH = 0
@@ -95,6 +111,7 @@ def game_loop():
     
     walking = False
     walkingL = 0
+    walkingR = 0
     
     power = 0
     powerInc = 1
@@ -103,6 +120,8 @@ def game_loop():
     maxHealth = 100
     gold = 100000
 
+    enemies = []
+    
     helper = 0
     helperC = 10
 
@@ -127,7 +146,7 @@ def game_loop():
     down = False
  
     while not gameExit:
-
+        pygame.event.pump()
         gameDisplay.fill(white)
 
         for event in pygame.event.get():
@@ -135,66 +154,75 @@ def game_loop():
                 pygame.quit()
                 quit()
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                if not inAir:
-                    maxH = 100
-                    inAir = True
-                    playerH = 0
-                    rise = True
-            if event.key == pygame.K_a:
-                if not walking:
-                    walking = True
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    if not inAir:
+                        maxH = 100
+                        inAir = True
+                        playerH = 0
+                        rise = True
+                        
+                if event.key == pygame.K_a:
+                    dx = -2
                     walkingL = 1
-                if walkingL < 2:
-                    playerS = playerImgWL1
-                    walkingL+=.2
-                elif walkingL < 3:
-                    playerS = playerImgWL2
-                    walkingL+=.2
-                elif walkingL < 4:
-                    playerS = playerImgWL3
-                    walkingL+=.2
-                elif walkingL < 5:
-                    playerS = playerImgWL4
-                    walkingL+=.2
-                elif walkingL < 6:
-                    playerS = playerImgWL5
-                    walkingL+=.2
-                elif walkingL < 7:
-                    walkingL = 1
-                    playerS = playerImgWL6
-            if event.key == pygame.K_d:
-                if not walking:
-                    walking = True
+                    
+                if event.key == pygame.K_d:
+                    dx = 2
                     walkingR = 1
-                if walkingR < 2:
-                    playerS = playerImgWR1
-                    walkingR+=.2
-                elif walkingR < 3:
-                    playerS = playerImgWR2
-                    walkingR+=.2
-                elif walkingR < 4:
-                    playerS = playerImgWR3
-                    walkingR+=.2
-                elif walkingR < 5:
-                    playerS = playerImgWR4
-                    walkingR+=.2
-                elif walkingR < 6:
-                    playerS = playerImgWR5
-                    walkingR+=.2 
-                elif walkingR < 7:
-                    walkingR = 1
-                    playerS = playerImgWR6
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_a:
-                playerS = playerImgL
-                walking = False
-                walkingL = 0
-            if event.key == pygame.K_d:
-                playerS = playerImgR
-                walking = False
-                walkingR = 0
+                    
+            elif event.type == pygame.KEYUP:
+                dx = 0
+                if event.key == pygame.K_a:
+                    playerS = playerImgL
+                    walking = False
+                    walkingL = 0
+                if event.key == pygame.K_d:
+                    playerS = playerImgR
+                    walking = False
+                    walkingR = 0
+        if playerX < 2 and pygame.key.get_pressed()[pygame.K_a]:
+            playerX = 0
+        elif playerX > display_width - 34 and pygame.key.get_pressed()[pygame.K_d]:
+            playerX = display_width - 32
+        else:
+            playerX += dx
+        if walkingR < 2 and walkingR >= 1:
+            playerS = playerImgWR1
+            walkingR+=.2
+        elif walkingR < 3 and walkingR >= 1:
+            playerS = playerImgWR2
+            walkingR+=.2
+        elif walkingR < 4 and walkingR >= 1:
+            playerS = playerImgWR3
+            walkingR+=.2
+        elif walkingR < 5 and walkingR >= 1:
+            playerS = playerImgWR4
+            walkingR+=.2
+        elif walkingR < 6 and walkingR >= 1:
+            playerS = playerImgWR5
+            walkingR+=.2 
+        elif walkingR < 7 and walkingR >= 1:
+            walkingR = 1
+            playerS = playerImgWR6   
+        if walkingL < 2 and walkingL >= 1:
+            playerS = playerImgWL1
+            walkingL+=.2
+        elif walkingL < 3 and walkingL >= 1:
+            playerS = playerImgWL2
+            walkingL+=.2
+        elif walkingL < 4 and walkingL >= 1:
+            playerS = playerImgWL3
+            walkingL+=.2
+        elif walkingL < 5 and walkingL >= 1:
+            playerS = playerImgWL4
+            walkingL+=.2
+        elif walkingL < 6 and walkingL >= 1:
+            playerS = playerImgWL5
+            walkingL+=.2
+        elif walkingL < 7 and walkingL >= 1:
+            walkingL = 1
+            playerS = playerImgWL6
+            
         if playerH < maxH and rise == True:
             playerY -= 2
             playerH += 2
@@ -210,7 +238,6 @@ def game_loop():
             
         player(playerX,playerY,playerS)
             
-
         ##other screen stuff
         
         mouse = pygame.mouse.get_pos()
@@ -233,7 +260,11 @@ def game_loop():
         
         ##Power Counter
         smallText = pygame.font.Font("freesansbold.ttf",15)
-        textSurf, textRect = text_objects("Power: " + suf(power,0), smallText,black)
+        if power > 1000:
+            c = 1
+        else:
+            c = 0
+        textSurf, textRect = text_objects("Power: " + suf(power,c), smallText,black)
         textRect = (250,422)
         gameDisplay.blit(textSurf, textRect)
         
@@ -290,7 +321,7 @@ def game_loop():
             if gold >= helper2C:
                 pygame.draw.rect(gameDisplay, bright_green,(200,500,100,100))
                 if click[0] == 1 and not down:
-                    powerPS += 5
+                    powerPS += 1
                     helper2 += 1
                     gold -= helper2C
                     helper2C +=50
@@ -308,7 +339,7 @@ def game_loop():
             if gold >= helper3C:
                 pygame.draw.rect(gameDisplay, bright_green,(300,500,100,100))
                 if click[0] == 1 and not down:
-                    powerPS += 50
+                    powerPS += 5
                     helper3 += 1
                     gold -= helper3C
                     helper3C +=500
@@ -326,7 +357,7 @@ def game_loop():
             if gold >= helper4C:
                 pygame.draw.rect(gameDisplay, bright_green,(400,500,100,100))
                 if click[0] == 1 and not down:
-                    powerPS += 500
+                    powerPS += 20
                     helper4 += 1
                     gold -= helper4C
                     helper4C +=5000
@@ -344,7 +375,7 @@ def game_loop():
             if gold >= helper5C:
                 pygame.draw.rect(gameDisplay, bright_green,(500,500,100,100))
                 if click[0] == 1 and not down:
-                    powerPS += 5000
+                    powerPS += 50
                     helper5 += 1
                     gold -= helper5C
                     helper5C +=50000
@@ -362,7 +393,7 @@ def game_loop():
             if gold >= helper6C:
                 pygame.draw.rect(gameDisplay, bright_green,(600,500,100,100))
                 if click[0] == 1 and not down:
-                    powerPS += 50000
+                    powerPS += 75
                     helper6 += 1
                     gold -= helper6C
                     helper6C +=500000
@@ -380,7 +411,7 @@ def game_loop():
             if gold >= helper7C:
                 pygame.draw.rect(gameDisplay, bright_green,(700,500,100,100))
                 if click[0] == 1 and not down:
-                    powerPS += 500000
+                    powerPS += 150
                     helper7 += 1
                     gold -= helper7C
                     helper7C +=5000000
@@ -389,19 +420,21 @@ def game_loop():
                 pygame.draw.rect(gameDisplay, red,(700,500,100,100))
         button("Helper7",700,helper7,helper7C)
 
-
-        
         if click[0] == 0:
             down = False
         if click[0] == 1:
             down = True
 
-        ticks += 1
         if ticks%60 == 0:
             power += powerPS
-            
+        if (ticks+240)%480 == 0:
+            enemies += [Enemy(1,0)]
+        if ticks%480 == 0:
+            enemies += [Enemy(1,1)]
+        for enemy in enemies:
+            enemy.draw()
+        ticks += 1    
         pygame.display.update()
         clock.tick(60)
 
 game_loop()
-#

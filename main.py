@@ -32,7 +32,27 @@ playerImgWR6 = pygame.image.load('pc_wr6.png')
 
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 clock = pygame.time.Clock()
+class Player:
+    def __init__(self):
+        self.playerX = 100
+        self.playerY = 368
+        self.playerS = playerImgR
+        self.dx = 0
+        self.inAir = False
+        self.rise = False
+        self.playerH = 0
+        self.maxH = 0
 
+        self.health = 75
+        self.maxHealth = 100
+        
+        self.walking = False
+        self.walkingL = 0
+        self.walkingR = 0
+    def draw(self):
+        gameDisplay.blit(self.playerS,(self.playerX,self.playerY))
+    
+        
 class Enemy:
     def __init__(self,l,s):
         self.side = s
@@ -48,10 +68,16 @@ class Enemy:
         self.x += self.move
         if self.health > 0:
             gameDisplay.blit(self.image,(self.x-8,368))
-            
-def player(x,y,s):
-    gameDisplay.blit(s,(x,y))
-    
+    def testForHit(self, player):
+        if self.x > player.playerX - 16 and self.x < player.playerX + 16:
+            self.health = 0
+            player.health -= 10
+    def testForDead(self):
+        if self.health < 0:
+            return True
+        else:
+            return False
+
 def text_objects(text, font, color):
     textSurface = font.render(text, True, color)
     return textSurface, textSurface.get_rect()
@@ -100,27 +126,14 @@ def game_loop():
     ticks = 0
     level = 1
     
-    playerX = 100
-    playerY = 368
-    playerS = playerImgR
-    dx = 0
-    inAir = False
-    rise = False
-    playerH = 0
-    maxH = 0
-    
-    walking = False
-    walkingL = 0
-    walkingR = 0
-    
     power = 0
     powerInc = 1
     powerPS = 0
-    health = 75
-    maxHealth = 100
+    
     gold = 100000
 
     enemies = []
+    player = Player()
     
     helper = 0
     helperC = 10
@@ -144,7 +157,9 @@ def game_loop():
     helper7C = 10000000
     
     down = False
- 
+
+
+    
     while not gameExit:
         pygame.event.pump()
         gameDisplay.fill(white)
@@ -156,87 +171,89 @@ def game_loop():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    if not inAir:
-                        maxH = 100
-                        inAir = True
-                        playerH = 0
-                        rise = True
+                    if not player.inAir:
+                        player.maxH = 100
+                        player.inAir = True
+                        player.playerH = 0
+                        player.rise = True
                         
                 if event.key == pygame.K_a:
-                    dx = -2
-                    walkingL = 1
+                    player.dx = -2
+                    player.walkingL = 1
                     
                 if event.key == pygame.K_d:
-                    dx = 2
-                    walkingR = 1
+                    player.dx = 2
+                    player.walkingR = 1
                     
             elif event.type == pygame.KEYUP:
-                dx = 0
+                player.dx = 0
                 if event.key == pygame.K_a:
-                    playerS = playerImgL
-                    walking = False
-                    walkingL = 0
+                    player.playerS = playerImgL
+                    player.walking = False
+                    player.walkingL = 0
                 if event.key == pygame.K_d:
-                    playerS = playerImgR
-                    walking = False
-                    walkingR = 0
-        if playerX < 2 and pygame.key.get_pressed()[pygame.K_a]:
-            playerX = 0
-        elif playerX > display_width - 34 and pygame.key.get_pressed()[pygame.K_d]:
-            playerX = display_width - 32
+                    player.playerS = playerImgR
+                    player.walking = False
+                    player.walkingR = 0
+                    
+        if player.playerX < 2 and pygame.key.get_pressed()[pygame.K_a]:
+            player.playerX = 0
+        elif player.playerX > display_width - 34 and pygame.key.get_pressed()[pygame.K_d]:
+            player.playerX = display_width - 32
         else:
-            playerX += dx
-        if walkingR < 2 and walkingR >= 1:
-            playerS = playerImgWR1
-            walkingR+=.2
-        elif walkingR < 3 and walkingR >= 1:
+            player.playerX += player.dx
+        if player.walkingR < 2 and player.walkingR >= 1:
+            player.playerS = playerImgWR1
+            player.walkingR+=.2
+        elif player.walkingR < 3 and player.walkingR >= 1:
             playerS = playerImgWR2
-            walkingR+=.2
-        elif walkingR < 4 and walkingR >= 1:
-            playerS = playerImgWR3
-            walkingR+=.2
-        elif walkingR < 5 and walkingR >= 1:
-            playerS = playerImgWR4
-            walkingR+=.2
-        elif walkingR < 6 and walkingR >= 1:
-            playerS = playerImgWR5
-            walkingR+=.2 
-        elif walkingR < 7 and walkingR >= 1:
-            walkingR = 1
-            playerS = playerImgWR6   
-        if walkingL < 2 and walkingL >= 1:
-            playerS = playerImgWL1
-            walkingL+=.2
-        elif walkingL < 3 and walkingL >= 1:
-            playerS = playerImgWL2
-            walkingL+=.2
-        elif walkingL < 4 and walkingL >= 1:
-            playerS = playerImgWL3
-            walkingL+=.2
-        elif walkingL < 5 and walkingL >= 1:
-            playerS = playerImgWL4
-            walkingL+=.2
-        elif walkingL < 6 and walkingL >= 1:
-            playerS = playerImgWL5
-            walkingL+=.2
-        elif walkingL < 7 and walkingL >= 1:
-            walkingL = 1
-            playerS = playerImgWL6
+            player.walkingR+=.2
+        elif player.walkingR < 4 and player.walkingR >= 1:
+            player.playerS = playerImgWR3
+            player.walkingR+=.2
+        elif player.walkingR < 5 and player.walkingR >= 1:
+            player.playerS = playerImgWR4
+            player.walkingR+=.2
+        elif player.walkingR < 6 and player.walkingR >= 1:
+            player.playerS = playerImgWR5
+            player.walkingR+=.2 
+        elif player.walkingR < 7 and player.walkingR >= 1:
+            player.walkingR = 1
+            player.playerS = playerImgWR6
             
-        if playerH < maxH and rise == True:
-            playerY -= 2
-            playerH += 2
-        elif playerH == maxH:
-            rise = False
-            playerY += 2
-            playerH -= 2
-        elif playerH > 0:
-            playerY += 2
-            playerH -= 2
+        if player.walkingL < 2 and player.walkingL >= 1:
+            player.playerS = playerImgWL1
+            player.walkingL+=.2
+        elif player.walkingL < 3 and player.walkingL >= 1:
+            player.playerS = playerImgWL2
+            player.walkingL+=.2
+        elif player.walkingL < 4 and player.walkingL >= 1:
+            player.playerS = playerImgWL3
+            player.walkingL+=.2
+        elif player.walkingL < 5 and player.walkingL >= 1:
+            player.playerS = playerImgWL4
+            player.walkingL+=.2
+        elif player.walkingL < 6 and player.walkingL >= 1:
+            player.playerS = playerImgWL5
+            player.walkingL+=.2
+        elif player.walkingL < 7 and player.walkingL >= 1:
+            player.walkingL = 1
+            player.playerS = playerImgWL6
+            
+        if player.playerH < player.maxH and player.rise == True:
+            player.playerY -= 2
+            player.playerH += 2
+        elif player.playerH == player.maxH:
+            player.rise = False
+            player.playerY += 2
+            player.playerH -= 2
+        elif player.playerH > 0:
+            player.playerY += 2
+            player.playerH -= 2
         else:
-            inAir = False
+            player.inAir = False
             
-        player(playerX,playerY,playerS)
+        player.draw()
             
         ##other screen stuff
         
@@ -248,13 +265,13 @@ def game_loop():
         
         ##Health Bar
         pygame.draw.rect(gameDisplay, black,(25,430,204,40))
-        pygame.draw.rect(gameDisplay, bright_red, (27,432,200*(health/maxHealth),36))
+        pygame.draw.rect(gameDisplay, bright_red, (27,432,200*(player.health/player.maxHealth),36))
         smallText = pygame.font.Font("freesansbold.ttf",15)
         textSurf, textRect = text_objects("Health", smallText,black)
         textRect.center = (50,417)
         gameDisplay.blit(textSurf, textRect)
         smallText = pygame.font.Font("freesansbold.ttf",15)
-        textSurf, textRect = text_objects((suf(health,0) + "/" + suf(maxHealth,0)), smallText,white)
+        textSurf, textRect = text_objects((suf(player.health,0) + "/" + suf(player.maxHealth,0)), smallText,white)
         textRect.center = (129,450)
         gameDisplay.blit(textSurf, textRect)
         
@@ -433,6 +450,13 @@ def game_loop():
             enemies += [Enemy(1,1)]
         for enemy in enemies:
             enemy.draw()
+        for i in range(0, len(enemies)):
+            if enemies[i].testForDead:
+                print("kill")
+                del enemies[i]
+        for enemy in enemies:
+            enemy.testForHit(player)
+
         ticks += 1    
         pygame.display.update()
         clock.tick(60)

@@ -33,6 +33,7 @@ playerImgWR6 = pygame.image.load('pc_wr6.png')
 
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 clock = pygame.time.Clock()
+
 class Level:
     def __init__(self,l,p,pinc,pps,g,h1,h2,h3,h4,h5,h6,h7):
         
@@ -43,14 +44,15 @@ class Level:
         power = p
         powerInc = pinc
         powerPS = pps
-        
         gold = g
 
+        bullets = []
         enemies = []
         spawnRate = 122 - (2 * level)
         kills = 0
         player = Player()
         
+        #Helper Stats
         helper = h1
         helperC = 10 + h1*5
 
@@ -73,9 +75,8 @@ class Level:
         helper7C = 10000000 + h7*5000000
         
         down = False
-
-
         
+        ##Game Loop
         while not gameExit:
             pygame.event.pump()
             gameDisplay.fill(white)
@@ -86,6 +87,7 @@ class Level:
                     quit()
 
                 if event.type == pygame.KEYDOWN:
+                    
                     if event.key == pygame.K_SPACE:
                         if not player.inAir:
                             player.maxH = 100
@@ -94,30 +96,43 @@ class Level:
                             player.rise = True
                             
                     if event.key == pygame.K_a:
+                        player.face = "Left"
                         player.dx = -4
                         player.walkingL = 1
                         
-                    if event.key == pygame.K_d:
+                    elif event.key == pygame.K_d:
+                        player.face = "Right"
                         player.dx = 4
                         player.walkingR = 1
                         
                 elif event.type == pygame.KEYUP:
                     player.dx = 0
+                    
                     if event.key == pygame.K_a:
                         player.playerS = playerImgL
+                        player.face = "Left"
                         player.walking = False
                         player.walkingL = 0
+                        
                     if event.key == pygame.K_d:
                         player.playerS = playerImgR
+                        player.face = "Right"
                         player.walking = False
                         player.walkingR = 0
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LSHIFT:
+                        bullets += [Bullet(player)]
                         
+            ##Boarder Testing and Moving           
             if player.playerX < 2 and pygame.key.get_pressed()[pygame.K_a]:
                 player.playerX = 0
             elif player.playerX > display_width - 34 and pygame.key.get_pressed()[pygame.K_d]:
                 player.playerX = display_width - 32
             else:
                 player.playerX += player.dx
+                
+            ##Walk Left Cycle     
             if player.walkingR < 2 and player.walkingR >= 1:
                 player.playerS = playerImgWR1
                 player.walkingR+=.2
@@ -137,7 +152,8 @@ class Level:
                 player.walkingR = 1
                 player.playerS = playerImgWR6
                 
-            if player.walkingL < 2 and player.walkingL >= 1:
+            ##Walk Right Cycle    
+            elif player.walkingL < 2 and player.walkingL >= 1:
                 player.playerS = playerImgWL1
                 player.walkingL+=.2
             elif player.walkingL < 3 and player.walkingL >= 1:
@@ -156,6 +172,7 @@ class Level:
                 player.walkingL = 1
                 player.playerS = playerImgWL6
                 
+            ##Jump Cycle    
             if player.playerH < player.maxH and player.rise == True:
                 player.playerY -= 2
                 player.playerH += 2
@@ -170,12 +187,11 @@ class Level:
                 player.inAir = False
                 
             player.draw()
-                
-            ##other screen stuff
-            
+
+            ##Getting Mouse Info
             mouse = pygame.mouse.get_pos()
             click = pygame.mouse.get_pressed()
-            
+     
         ##Stat Row
             pygame.draw.rect(gameDisplay, brown,(0,400,800,100))
             
@@ -218,6 +234,7 @@ class Level:
             textSurf, textRect = text_objects((str(10-kills)+" kills until level "+str(level+1)),smallText,black)
             textRect.center = (display_width/2,20)
             gameDisplay.blit(textSurf, textRect)
+            
         ##Bottom Row
             ##Clicker
             if 100 > mouse[0] > 0 and 500+100 > mouse[1] > 500:
@@ -362,35 +379,51 @@ class Level:
                 down = False
             if click[0] == 1:
                 down = True
-
+                
+            ##Adds PowerPS to Power every second
             if ticks%60 == 0:
                 power += powerPS
-                
+            for bullet in bullets:
+                bullet.draw()
+        ##Enemy stuff
+            ##Spwans Enemies
             if (ticks+spawnRate)%(spawnRate*2) == 0:
                 enemies += [Enemy(level,0)]
             if ticks%(spawnRate*2) == 0:
                 enemies += [Enemy(level,1)]
+            #Draws Enemies
             for enemy in enemies:
                 enemy.draw(player)
+            ##What Happens When Enemy Dies
             for enemy in enemies:
                 if enemy.testForDead():
                     kills += 1
+                    gold += 10 * l
                     enemies.remove(enemy)
+            ##What Happens if Enemy Collides With Player
             for enemy in enemies:
                 if enemy.testForHit(player) == True:
                     player.health -= 10 * level
                     
-            if kills == 10:
-                print("next level! " + str(level + 1))
-                newLevel = Level(level + 1, power, powerInc, powerPS, gold, helper, helper2, helper3, helper4, helper5, helper6, helper7)
-
+            ##End Game Conditions
+            if player.health <= 0:
+                pygame.quit()
+                quit()
+            ##Health Scales with Power (Numbers might change)
             player.health += 100 * (1 + math.log10(power)) - player.maxHealth
             player.maxHealth = 100 * (1 + math.log10(power))
 
+            ##Level Up
+            if kills >= 10:
+                print("Next level! " + str(level + 1))
+                newLevel = Level(level + 1, power, powerInc, powerPS, gold, helper, helper2, helper3, helper4, helper5, helper6, helper7)
+            
+            
             ticks += 1    
             pygame.display.update()
             clock.tick(60)
-
+            
+##Player Class
 class Player:
     def __init__(self):
         self.playerX = 100
@@ -406,43 +439,66 @@ class Player:
         self.walking = False
         self.walkingL = 0
         self.walkingR = 0
-        
+        self.face = "Right"
+
+    ##Draws Player    
     def draw(self):
         gameDisplay.blit(self.playerS,(self.playerX,self.playerY))
     
-        
+##Enemy Class        
 class Enemy:
     def __init__(self,l,s):
         self.side = s
         self.move = 2
+
         if s == 0:
             self.image = pygame.image.load('pc_fr.png')
         else:
             self.image = pygame.image.load('pc_fl.png')
+            
         self.health = 10 * l
         self.x = s*display_width
+
+    #Draws Enemy
     def draw(self,player):
         if self.x > player.playerX:
             self.x -= self.move
         elif self.x < player.playerX:
             self.x += self.move
         gameDisplay.blit(self.image,(self.x-8,368))
-
+        
+    ##Tests for Collision with Player
     def testForHit(self, player):
         if self.x > player.playerX - 16 and self.x < player.playerX + 16 and player.playerY + 32 > 368:
             self.health = 0
             return True
         else: return False
-            
+
+    ##Tests if this Enemy is dead        
     def testForDead(self):
         if self.health > 0: return False
         else: return True
-
-
+        
+class Bullet:
+    def __init__(self,player):
+        self.d = player.face
+        self.y = player.playerY + 8
+        if self.d == "Right":
+            self.x = player.playerX + 16 + 2
+            self.m = 8
+        else:
+            self.x = player.playerX - 2 -2
+            self.m = - 8
+    def draw(self):
+       pygame.draw.rect(gameDisplay, black,(self.x,self.y,2,2))
+       self.x += self.m
+        
+##For Making Text
 def text_objects(text, font, color):
     textSurface = font.render(text, True, color)
     return textSurface, textSurface.get_rect()
 
+#Shortens Numbers
 def suf(x,d):
     for i in range(0,5):
         if x >= 1000:
@@ -466,8 +522,8 @@ def suf(x,d):
         suf = ""
     return(str(round(x,d)) + suf)
 
-def button(name, x, number, cost):
-    
+##Clicker Bar Buttons
+def button(name, x, number, cost):    
     smallText = pygame.font.Font("freesansbold.ttf",15)
     textSurf, textRect = text_objects(name, smallText,black)
     textRect.center = ( (x+(100/2)), (500+(100/4)) )
@@ -481,5 +537,5 @@ def button(name, x, number, cost):
     textRect.center = ( (x+(100/2)), (500+(3*100/4)) )
     gameDisplay.blit(textSurf, textRect)
 
-
+##l = int(input("What Level Would You Like To Start At?"))
 start = Level(1,1,1,0,100000,0,0,0,0,0,0,0)

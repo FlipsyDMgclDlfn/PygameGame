@@ -30,6 +30,16 @@ playerImgWR3 = pygame.image.load('pc_wr3.png')
 playerImgWR4 = pygame.image.load('pc_wr4.png')
 playerImgWR5 = pygame.image.load('pc_wr5.png')
 playerImgWR6 = pygame.image.load('pc_wr6.png')
+playerImgAPR = pygame.image.load('pc_mpr6.png')
+playerImgAPL = pygame.image.load('pc_mpl6.png')
+playerImgASR = pygame.image.load('pc_msnl6.png')
+playerImgASL = pygame.image.load('pc_msnr6.png')
+playerImgSR = pygame.image.load('pc_snr5.png')
+playerImgSL = pygame.image.load('pc_snl5.png')
+playerImgPR = pygame.image.load('pc_pr12.png')
+playerImgPL = pygame.image.load('pc_pl12.png')
+enr = pygame.image.load('en_r.png')
+enl = pygame.image.load('en_l.png')
 
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 clock = pygame.time.Clock()
@@ -452,9 +462,9 @@ class Enemy:
         self.move = 2
 
         if s == 0:
-            self.image = pygame.image.load('pc_fr.png')
+            self.img = enr
         else:
-            self.image = pygame.image.load('pc_fl.png')
+            self.img = enl
             
         self.health = 10 * l
         self.x = s*display_width
@@ -463,9 +473,11 @@ class Enemy:
     def draw(self,player):
         if self.x > player.playerX:
             self.x -= self.move
+            self.img = enl
         elif self.x < player.playerX:
             self.x += self.move
-        gameDisplay.blit(self.image,(self.x-8,368))
+            self.img = enr
+        gameDisplay.blit(self.img,(self.x-8,368))
         
     ##Tests for Collision with Player
     def testForHit(self, player):

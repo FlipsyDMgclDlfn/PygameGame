@@ -393,32 +393,54 @@ class Level:
             ##Adds PowerPS to Power every second
             if ticks%60 == 0:
                 power += powerPS
+                
+        ##Bullet Stuff
+                
+            ##Draws Bullets
             for bullet in bullets:
                 bullet.draw()
+
+            ##Tests For Bullets Off Screen        
+            for bullet in bullets:
+                if bullet.testForOff == True:
+                    bullets.remove(bullet)
+                    
+                
         ##Enemy stuff
+                
             ##Spwans Enemies
             if (ticks+spawnRate)%(spawnRate*2) == 0:
                 enemies += [Enemy(level,0)]
             if ticks%(spawnRate*2) == 0:
                 enemies += [Enemy(level,1)]
+                
             #Draws Enemies
             for enemy in enemies:
                 enemy.draw(player)
+                
             ##What Happens When Enemy Dies
             for enemy in enemies:
                 if enemy.testForDead():
                     kills += 1
                     gold += 10 * l
                     enemies.remove(enemy)
+                    
             ##What Happens if Enemy Collides With Player
             for enemy in enemies:
                 if enemy.testForHit(player) == True:
                     player.health -= 10 * level
+
+            ##What Happensif Enemy Collides With a Bullet
+                for enemy in enemies:
+                    for bullet in bullets:
+                        if enemy.testForHitBullet(bullet,player) == True:
+                            bullets.remove(bullet)
                     
             ##End Game Conditions
             if player.health <= 0:
-                pygame.quit()
-                quit()
+                print("Try again!")
+                newLevel = Level(level, power, powerInc, powerPS, gold, helper, helper2, helper3, helper4, helper5, helper6, helper7)
+                
             ##Health Scales with Power (Numbers might change)
             player.health += 100 * (1 + math.log10(power)) - player.maxHealth
             player.maxHealth = 100 * (1 + math.log10(power))
@@ -432,6 +454,8 @@ class Level:
             ticks += 1    
             pygame.display.update()
             clock.tick(60)
+
+##Classes
             
 ##Player Class
 class Player:
@@ -485,13 +509,22 @@ class Enemy:
             self.health = 0
             return True
         else: return False
-
+        
+    ##Tests for Collision with a Bullet
+    def testForHitBullet(self, bullet,player):
+        if self.x + 16 > bullet.x and self.x - 16 < bullet.x and bullet.y + 2 > 368:
+            self.health -= player.maxHealth/10
+            return True
+        else: return False
+        
     ##Tests if this Enemy is dead        
     def testForDead(self):
         if self.health > 0: return False
         else: return True
-        
+
+##Bullet Class        
 class Bullet:
+    
     def __init__(self,player):
         self.d = player.face
         self.y = player.playerY + 8
@@ -501,10 +534,19 @@ class Bullet:
         else:
             self.x = player.playerX - 2 -2
             self.m = - 8
+            
     def draw(self):
        pygame.draw.rect(gameDisplay, black,(self.x,self.y,2,2))
        self.x += self.m
-        
+
+    def testForOff(self):
+        print(self.x)
+        if self.x - 2 < 0 or self.x > display_width:
+            return True
+        return False
+       
+##Static Methods
+       
 ##For Making Text
 def text_objects(text, font, color):
     textSurface = font.render(text, True, color)
@@ -550,4 +592,4 @@ def button(name, x, number, cost):
     gameDisplay.blit(textSurf, textRect)
 
 ##l = int(input("What Level Would You Like To Start At?"))
-start = Level(1,1,1,0,100000,0,0,0,0,0,0,0)
+start = Level(200,1,1,0,100000,0,0,0,0,0,0,0)

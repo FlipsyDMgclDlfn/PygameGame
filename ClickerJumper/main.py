@@ -592,4 +592,4 @@ def button(name, x, number, cost):
     gameDisplay.blit(textSurf, textRect)
 
 ##l = int(input("What Level Would You Like To Start At?"))
-start = Level(200,1,1,0,100000,0,0,0,0,0,0,0)
+start = Level(1,1,1,0,100000,0,0,0,0,0,0,0)

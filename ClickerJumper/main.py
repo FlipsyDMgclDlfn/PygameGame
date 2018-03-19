@@ -60,11 +60,11 @@ class Level:
         enemies = []
         spawnRate = 122 - (2 * level)
         kills = 0
-        player = Player(pygame.SPACE, pygame.K_a, pygame.K_d, pygame.L_SHIFT)
+        player = Player(pygame.K_SPACE, pygame.K_a, pygame.K_d, pygame.K_LSHIFT)
         
         #Helper Stats
         helper1 = h1
-        helperC = 10 + h1*5
+        helper1C = 10 + h1*5
 
         helper2 = h2
         helper2C = 100 + h2*50
@@ -84,7 +84,7 @@ class Level:
         helper7 = h7
         helper7C = 10000000 + h7*5000000
         
-        helpers = [Helper("Helper", helper1C, helper1, .1, 5, 100),Helper("Helper2", helper2C, helper2, 1, 50, 200),Helper("Helper3", helper3C, helper3, 10, 500, 300),Helper("Helper4", helper4C, helper4, 100, 5000, 400),Helper("Helper5", helper5C, helper5, 1000, 50000, 500),Helper("Helper6", helper6C, helper6, 10000, 500000, 600),Helper("Helper7", helper1C, helper7, 100000, 5000000, 700)]
+        helpers = [Helper("Helper", helper1C, helper1, .1, 5, 100),Helper("Helper2", helper2C, helper2, 1, 50, 200),Helper("Helper3", helper3C, helper3, 10, 500, 300),Helper("Helper4", helper4C, helper4, 100, 5000, 400),Helper("Helper5", helper5C, helper5, 1000, 50000, 500),Helper("Helper6", helper6C, helper6, 10000, 500000, 600),Helper("Helper7", helper7C, helper7, 100000, 5000000, 700)]
         
         down = False
         
@@ -186,15 +186,15 @@ class Level:
                 
             ##Jump Cycle    
             if player.playerH < player.maxH and player.rise == True:
-                player.playerY -= 2
-                player.playerH += 2
+                player.playerY -= 4
+                player.playerH += 4
             elif player.playerH == player.maxH:
                 player.rise = False
-                player.playerY += 2
-                player.playerH -= 2
+                player.playerY += 4
+                player.playerH -= 4
             elif player.playerH > 0:
-                player.playerY += 2
-                player.playerH -= 2
+                player.playerY += 4
+                player.playerH -= 4
             else:
                 player.inAir = False
                 
@@ -260,20 +260,21 @@ class Level:
             textSurf, textRect = text_objects("+ " + suf(powerInc,0), smallText,black)
             textRect.center = ( (100/2), (500+(100/2)) )
             gameDisplay.blit(textSurf, textRect)
-            
+
+            ##Draws and does helper stuff
             for helper in helpers:
                 if gold >= helper.helperC:
                     pygame.draw.rect(gameDisplay, green,(helper.x,500,100,100))
                 else:
-                    pygame.draw.rect(gameDisplay, red,(helper.100,500,100,100))
+                    pygame.draw.rect(gameDisplay, red,(helper.x,500,100,100))
                 if helper.x + 100 > mouse[0] > helper.x and 500+100 > mouse[1] > 500:
-                    if gold >= helperC:
+                    if gold >= helper.helperC:
                         pygame.draw.rect(gameDisplay, bright_green,(helper.x,500,100,100))
-                    if click[0] == 1 and not down:
-                        gold -= helper.helperC
-                        powerPS += helper.pInc
-                        helper.clicked()
-                        down = True
+                        if click[0] == 1 and not down:
+                            gold -= helper.helperC
+                            powerPS += helper.pInc
+                            helper.clicked()
+                            down = True
                     else:
                         pygame.draw.rect(gameDisplay, red,(helper.x,500,100,100))
                 button(helper.name,helper.x,helper.helper,helper.helperC)
@@ -341,7 +342,7 @@ class Level:
             ##Level Up
             if kills >= 10:
                 print("Next level! " + str(level + 1))
-                newLevel = Level(level + 1, power, powerInc, powerPS, gold, helper, helper2, helper3, helper4, helper5, helper6, helper7)
+                newLevel = Level(level+1, power, powerInc, powerPS, gold, helpers[0].helper, helpers[1].helper, helpers[2].helper, helpers[3].helper, helpers[4].helper, helpers[5].helper, helpers[6].helper)
             
             
             ticks += 1    
@@ -353,9 +354,9 @@ class Level:
 ##Helper class
 class Helper:
     
-    def __init__(self, name, cost, pInc, cInc, x):
+    def __init__(self, name, cost, count, pInc, cInc, x):
         self.name = name
-        self.helper = 0
+        self.helper = count
         self.helperC = cost
         self.pInc = pInc
         self.cInc = cInc
@@ -364,8 +365,6 @@ class Helper:
     def clicked(self):
         self.helper += 1
         self.helperC += self.cInc
-        
-    def draw(self, state):
         
             
 ##Player Class

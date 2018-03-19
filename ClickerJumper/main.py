@@ -60,10 +60,10 @@ class Level:
         enemies = []
         spawnRate = 122 - (2 * level)
         kills = 0
-        player = Player()
+        player = Player(pygame.SPACE, pygame.K_a, pygame.K_d, pygame.L_SHIFT)
         
         #Helper Stats
-        helper = h1
+        helper1 = h1
         helperC = 10 + h1*5
 
         helper2 = h2
@@ -84,6 +84,8 @@ class Level:
         helper7 = h7
         helper7C = 10000000 + h7*5000000
         
+        helpers = [Helper("Helper", helper1C, helper1, .1, 5, 100),Helper("Helper2", helper2C, helper2, 1, 50, 200),Helper("Helper3", helper3C, helper3, 10, 500, 300),Helper("Helper4", helper4C, helper4, 100, 5000, 400),Helper("Helper5", helper5C, helper5, 1000, 50000, 500),Helper("Helper6", helper6C, helper6, 10000, 500000, 600),Helper("Helper7", helper1C, helper7, 100000, 5000000, 700)]
+        
         down = False
         
         ##Game Loop
@@ -98,19 +100,19 @@ class Level:
 
                 if event.type == pygame.KEYDOWN:
                     
-                    if event.key == pygame.K_SPACE:
+                    if event.key == player.jump:
                         if not player.inAir:
                             player.maxH = 100
                             player.inAir = True
                             player.playerH = 0
                             player.rise = True
                             
-                    if event.key == pygame.K_a:
+                    if event.key == player.left:
                         player.face = "Left"
                         player.dx = -4
                         player.walkingL = 1
                         
-                    elif event.key == pygame.K_d:
+                    elif event.key == player.right:
                         player.face = "Right"
                         player.dx = 4
                         player.walkingR = 1
@@ -118,20 +120,20 @@ class Level:
                 elif event.type == pygame.KEYUP:
                     player.dx = 0
                     
-                    if event.key == pygame.K_a:
+                    if event.key == player.left:
                         player.playerS = playerImgL
                         player.face = "Left"
                         player.walking = False
                         player.walkingL = 0
                         
-                    if event.key == pygame.K_d:
+                    if event.key == player.right:
                         player.playerS = playerImgR
                         player.face = "Right"
                         player.walking = False
                         player.walkingR = 0
 
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LSHIFT:
+                    if event.key == player.shoot:
                         bullets += [Bullet(player)]
                         
             ##Boarder Testing and Moving           
@@ -258,132 +260,23 @@ class Level:
             textSurf, textRect = text_objects("+ " + suf(powerInc,0), smallText,black)
             textRect.center = ( (100/2), (500+(100/2)) )
             gameDisplay.blit(textSurf, textRect)
-
-            ##Helper
-            if gold >= helperC:
-                pygame.draw.rect(gameDisplay, green,(100,500,100,100))
-            else:
-                pygame.draw.rect(gameDisplay, red,(100,500,100,100))
-            if 100 + 100 > mouse[0] > 100 and 500+100 > mouse[1] > 500:
-                if gold >= helperC:
-                    pygame.draw.rect(gameDisplay, bright_green,(100,500,100,100))
-                    if click[0] == 1 and not down:
-                        powerPS += .1
-                        helper += 1
-                        gold -= helperC
-                        helperC +=5
-                        down = True
+            
+            for helper in helpers:
+                if gold >= helper.helperC:
+                    pygame.draw.rect(gameDisplay, green,(helper.x,500,100,100))
                 else:
-                    pygame.draw.rect(gameDisplay, red,(100,500,100,100))
-            button("Helper",100,helper,helperC)
-
-            ##Helper2
-            if gold >= helper2C:
-                pygame.draw.rect(gameDisplay, green,(200,500,100,100))
-            else:
-                pygame.draw.rect(gameDisplay, red,(200,500,100,100))
-            if 200 + 100 > mouse[0] > 200 and 500+100 > mouse[1] > 500:
-                if gold >= helper2C:
-                    pygame.draw.rect(gameDisplay, bright_green,(200,500,100,100))
+                    pygame.draw.rect(gameDisplay, red,(helper.100,500,100,100))
+                if helper.x + 100 > mouse[0] > helper.x and 500+100 > mouse[1] > 500:
+                    if gold >= helperC:
+                        pygame.draw.rect(gameDisplay, bright_green,(helper.x,500,100,100))
                     if click[0] == 1 and not down:
-                        powerPS += 1
-                        helper2 += 1
-                        gold -= helper2C
-                        helper2C +=50
+                        gold -= helper.helperC
+                        powerPS += helper.pInc
+                        helper.clicked()
                         down = True
-                else:
-                    pygame.draw.rect(gameDisplay, red,(200,500,100,100))
-            button("Helper2",200,helper2,helper2C)
-
-            ##Helper3
-            if gold >= helper3C:
-                pygame.draw.rect(gameDisplay, green,(300,500,100,100))
-            else:
-                pygame.draw.rect(gameDisplay, red,(300,500,100,100))
-            if 300 + 100 > mouse[0] > 300 and 500+100 > mouse[1] > 500:
-                if gold >= helper3C:
-                    pygame.draw.rect(gameDisplay, bright_green,(300,500,100,100))
-                    if click[0] == 1 and not down:
-                        powerPS += 5
-                        helper3 += 1
-                        gold -= helper3C
-                        helper3C +=500
-                        down = True
-                else:
-                    pygame.draw.rect(gameDisplay, red,(300,500,100,100))
-            button("Helper3",300,helper3,helper3C)
-
-            ##Helper4
-            if gold >= helper4C:
-                pygame.draw.rect(gameDisplay, green,(400,500,100,100))
-            else:
-                pygame.draw.rect(gameDisplay, red,(400,500,100,100))
-            if 400 + 100 > mouse[0] > 400 and 500+100 > mouse[1] > 500:
-                if gold >= helper4C:
-                    pygame.draw.rect(gameDisplay, bright_green,(400,500,100,100))
-                    if click[0] == 1 and not down:
-                        powerPS += 20
-                        helper4 += 1
-                        gold -= helper4C
-                        helper4C +=5000
-                        down = True
-                else:
-                    pygame.draw.rect(gameDisplay, red,(400,500,100,100))
-            button("Helper4",400,helper4,helper4C)
-
-            ##Helper5
-            if gold >= helper5C:
-                pygame.draw.rect(gameDisplay, green,(500,500,100,100))
-            else:
-                pygame.draw.rect(gameDisplay, red,(500,500,100,100))
-            if 500 + 100 > mouse[0] > 500 and 500+100 > mouse[1] > 500:
-                if gold >= helper5C:
-                    pygame.draw.rect(gameDisplay, bright_green,(500,500,100,100))
-                    if click[0] == 1 and not down:
-                        powerPS += 50
-                        helper5 += 1
-                        gold -= helper5C
-                        helper5C +=50000
-                        down = True
-                else:
-                    pygame.draw.rect(gameDisplay, red,(500,500,100,100))
-            button("Helper5",500,helper5,helper5C)
-
-            ##Helper6
-            if gold >= helper6C:
-                pygame.draw.rect(gameDisplay, green,(600,500,100,100))
-            else:
-                pygame.draw.rect(gameDisplay, red,(600,500,100,100))
-            if 600 + 100 > mouse[0] > 600 and 500+100 > mouse[1] > 500:
-                if gold >= helper6C:
-                    pygame.draw.rect(gameDisplay, bright_green,(600,500,100,100))
-                    if click[0] == 1 and not down:
-                        powerPS += 75
-                        helper6 += 1
-                        gold -= helper6C
-                        helper6C +=500000
-                        down = True
-                else:
-                    pygame.draw.rect(gameDisplay, red,(600,500,100,100))
-            button("Helper6",600,helper6,helper6C)
-
-            ##Helper7
-            if gold >= helper7C:
-                pygame.draw.rect(gameDisplay, green,(700,500,100,100))
-            else:
-                pygame.draw.rect(gameDisplay, red,(700,500,100,100))
-            if 700 + 100 > mouse[0] > 700 and 500+100 > mouse[1] > 500:
-                if gold >= helper7C:
-                    pygame.draw.rect(gameDisplay, bright_green,(700,500,100,100))
-                    if click[0] == 1 and not down:
-                        powerPS += 150
-                        helper7 += 1
-                        gold -= helper7C
-                        helper7C +=5000000
-                        down = True
-                else:
-                    pygame.draw.rect(gameDisplay, red,(700,500,100,100))
-            button("Helper7",700,helper7,helper7C)
+                    else:
+                        pygame.draw.rect(gameDisplay, red,(helper.x,500,100,100))
+                button(helper.name,helper.x,helper.helper,helper.helperC)
 
             if click[0] == 0:
                 down = False
@@ -439,7 +332,7 @@ class Level:
             ##End Game Conditions
             if player.health <= 0:
                 print("Try again!")
-                newLevel = Level(level, power, powerInc, powerPS, gold, helper, helper2, helper3, helper4, helper5, helper6, helper7)
+                newLevel = Level(level, power, powerInc, powerPS, gold, helpers[0].helper, helpers[1].helper, helpers[2].helper, helpers[3].helper, helpers[4].helper, helpers[5].helper, helpers[6].helper)
                 
             ##Health Scales with Power (Numbers might change)
             player.health += 100 * (1 + math.log10(power)) - player.maxHealth
@@ -456,12 +349,36 @@ class Level:
             clock.tick(60)
 
 ##Classes
+
+##Helper class
+class Helper:
+    
+    def __init__(self, name, cost, pInc, cInc, x):
+        self.name = name
+        self.helper = 0
+        self.helperC = cost
+        self.pInc = pInc
+        self.cInc = cInc
+        self.x = x
+    ##If helper is clicked    
+    def clicked(self):
+        self.helper += 1
+        self.helperC += self.cInc
+        
+    def draw(self, state):
+        
             
 ##Player Class
 class Player:
-    def __init__(self):
+    def __init__(self, jump, left, right, shoot):
+        self.jump = jump
+        self.left = left
+        self.right = right
+        self.shoot = shoot
         self.playerX = 100
         self.playerY = 368
+        self.width = 16
+        self.height = 32
         self.playerS = playerImgR
         self.dx = 0
         self.inAir = False
@@ -492,6 +409,8 @@ class Enemy:
             
         self.health = 10 * l
         self.x = s*display_width
+        self.y = 368
+        self.width = 16
 
     #Draws Enemy
     def draw(self,player):
@@ -501,18 +420,18 @@ class Enemy:
         elif self.x < player.playerX:
             self.x += self.move
             self.img = enr
-        gameDisplay.blit(self.img,(self.x-8,368))
+        gameDisplay.blit(self.img,(self.x-8,self.y))
         
     ##Tests for Collision with Player
     def testForHit(self, player):
-        if self.x > player.playerX - 16 and self.x < player.playerX + 16 and player.playerY + 32 > 368:
+        if self.x > player.playerX - player.width and self.x < player.playerX + player.width and player.playerY + player.height > self.y:
             self.health = 0
             return True
         else: return False
         
     ##Tests for Collision with a Bullet
-    def testForHitBullet(self, bullet,player):
-        if self.x + 16 > bullet.x and self.x - 16 < bullet.x and bullet.y + 2 > 368:
+    def testForHitBullet(self, bullet, player):
+        if self.x + self.width > bullet.x and self.x - self.width < bullet.x and bullet.y + 2 > self.y:
             self.health -= player.maxHealth/10
             return True
         else: return False
@@ -529,7 +448,7 @@ class Bullet:
         self.d = player.face
         self.y = player.playerY + 8
         if self.d == "Right":
-            self.x = player.playerX + 16 + 2
+            self.x = player.playerX + player.width + 2
             self.m = 8
         else:
             self.x = player.playerX - 2 -2

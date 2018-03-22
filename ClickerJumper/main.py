@@ -102,10 +102,8 @@ class Level:
                     
                     if event.key == player.jump:
                         if not player.inAir:
-                            player.maxH = 100
+                            player.dy = 5
                             player.inAir = True
-                            player.playerH = 0
-                            player.rise = True
                             
                     if event.key == player.left:
                         player.face = "Left"
@@ -185,19 +183,15 @@ class Level:
                 player.playerS = playerImgWL6
                 
             ##Jump Cycle    
-            if player.playerH < player.maxH and player.rise == True:
-                player.playerY -= 4
-                player.playerH += 4
-            elif player.playerH == player.maxH:
-                player.rise = False
-                player.playerY += 4
-                player.playerH -= 4
-            elif player.playerH > 0:
-                player.playerY += 4
-                player.playerH -= 4
-            else:
+            player.playerY -= player.dy
+            if player.playerY < 368:
+                player.dy -= 10/60
+            if player.playerY > 368:
+                player.playerY = 368
+            if player.playerY == 368:
                 player.inAir = False
-                
+                player.dy = 0
+            
             player.draw()
 
             ##Getting Mouse Info
@@ -380,10 +374,8 @@ class Player:
         self.height = 32
         self.playerS = playerImgR
         self.dx = 0
+        self.dy = 0
         self.inAir = False
-        self.rise = False
-        self.playerH = 0
-        self.maxH = 0
         self.maxHealth = 100
         self.health = self.maxHealth
         self.walking = False

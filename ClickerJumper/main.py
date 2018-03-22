@@ -16,6 +16,8 @@ bright_green = (0,255,0)
 bright_red = (255,0,0)
 brown = (204,153,51)
 
+gravity = 10
+
 playerImgL = pygame.image.load('pc_fl.png')
 playerImgR = pygame.image.load('pc_fr.png')
 playerImgWL1 = pygame.image.load('pc_wl1.png')
@@ -188,7 +190,7 @@ class Level:
             ##Jump Cycle    
             player.playerY -= player.dy
             if player.playerY < 368:
-                player.dy -= 10/60
+                player.dy -= gravity/60 ##Accelaration due to gravity per tick(change to affect gravity)
             if player.playerY > 368:
                 player.playerY = 368
             if player.playerY == 368:
@@ -350,15 +352,15 @@ class Level:
 
 ##Helper class
 class Helper:
-    
+    ##Sets initail values
     def __init__(self, name, cost, count, pInc, cInc, x):
-        self.name = name
-        self.helper = count
-        self.helperC = cost
-        self.pInc = pInc
-        self.cInc = cInc
-        self.x = x
-    ##If helper is clicked    
+        self.name = name    ##Name
+        self.helper = count ##Num of helpers
+        self.helperC = cost ##Cost
+        self.pInc = pInc    ##Power PS gained per helper
+        self.cInc = cInc    ##Cost increase per helper
+        self.x = x          ##X cord on screen
+    ##If helper is clicked (Subject to change to expenential growth instread of linear)    
     def clicked(self):
         self.helper += 1
         self.helperC += self.cInc
@@ -367,24 +369,24 @@ class Helper:
 ##Player Class
 class Player:
     def __init__(self, jump, left, right, shoot):
-        self.jump = jump
-        self.left = left
-        self.right = right
-        self.shoot = shoot
-        self.playerX = 100
-        self.playerY = 368
-        self.width = 16
-        self.height = 32
-        self.playerS = playerImgR
-        self.dx = 0
-        self.dy = 0
-        self.inAir = False
-        self.maxHealth = 100
-        self.health = self.maxHealth
-        self.walking = False
-        self.walkingL = 0
-        self.walkingR = 0
-        self.face = "Right"
+        self.jump = jump                ##Key to press to jump
+        self.left = left                ##Key to press to move left
+        self.right = right              ##Key to press to move right
+        self.shoot = shoot              ##Key to press to shoot
+        self.playerX = 100              ##X cord of player 
+        self.playerY = 368              ##Y Cord of player
+        self.width = 16                 ##Width of player
+        self.height = 32                ##Height of player
+        self.playerS = playerImgR       ##Sprite for the player
+        self.dx = 0                     ##Change in X Cord for the player
+        self.dy = 0                     ##Change in Y Cord for player
+        self.inAir = False              ##Indicates in player is in the air or not
+        self.maxHealth = 100            ##Max Health for the player
+        self.health = self.maxHealth    ##Current Health for the player
+        self.walking = False            ##Indicates if the player is walking or not
+        self.walkingL = 0               ##Frame number for walking left
+        self.walkingR = 0               ##Frame number for walking right
+        self.face = "Right"             ##Direction facing
 
     ##Draws Player    
     def draw(self):
@@ -393,8 +395,8 @@ class Player:
 ##Enemy Class        
 class Enemy:
     def __init__(self,l,s):
-        self.side = s
-        self.move = 2
+        self.side = s               ##Intitail side for player (-1 or 1)
+        self.move = 2               ##
 
         if s == 0:
             self.img = enr

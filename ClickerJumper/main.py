@@ -45,6 +45,7 @@ gameDisplay = pygame.display.set_mode((display_width,display_height))
 clock = pygame.time.Clock()
 
 class Level:
+    ##Level Num, Power, Power Per Click, Power PS, Gold, Num Of Each Helper
     def __init__(self,l,p,pinc,pps,g,h1,h2,h3,h4,h5,h6,h7):
         
         gameExit = False
@@ -56,13 +57,15 @@ class Level:
         powerPS = pps
         gold = g
 
-        bullets = []
-        enemies = []
+        bullets = [] ## Keeps track of each bullet
+        enemies = [] ## Keeps track of each enemy
         spawnRate = 122 - (2 * level)
         kills = 0
+        
+        ##Allows control customization and some tweaks would allow multiplayer
         player = Player(pygame.K_SPACE, pygame.K_a, pygame.K_d, pygame.K_LSHIFT)
         
-        #Helper Stats
+        #Helper Stats (Costs subject to change)
         helper1 = h1
         helper1C = 10 + h1*5
 
@@ -306,7 +309,7 @@ class Level:
             for enemy in enemies:
                 enemy.draw(player)
                 
-            ##What Happens When Enemy Dies
+            ##Tests For Dead Enemies
             for enemy in enemies:
                 if enemy.testForDead():
                     kills += 1

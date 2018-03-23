@@ -8,6 +8,7 @@ pygame.init()
 display_width = 800
 display_height = 600
 
+##Colors
 black = (0,0,0)
 white = (255,255,255,1)
 red = (200,0,0)
@@ -16,22 +17,16 @@ bright_green = (0,255,0)
 bright_red = (255,0,0)
 brown = (204,153,51)
 
-gravity = 10
+##Game Constants
+GRAVITY = 10
+MAX_SPEED = 4
+SLIDE_DISTANCE = .5
 
+##Images (Not All Currently Used)
 playerImgL = pygame.image.load('pc_fl.png')
 playerImgR = pygame.image.load('pc_fr.png')
-playerImgWL1 = pygame.image.load('pc_wl1.png')
-playerImgWL2 = pygame.image.load('pc_wl2.png')
-playerImgWL3 = pygame.image.load('pc_wl3.png')
-playerImgWL4 = pygame.image.load('pc_wl4.png')
-playerImgWL5 = pygame.image.load('pc_wl5.png')
-playerImgWL6 = pygame.image.load('pc_wl6.png')
-playerImgWR1 = pygame.image.load('pc_wr1.png')
-playerImgWR2 = pygame.image.load('pc_wr2.png')
-playerImgWR3 = pygame.image.load('pc_wr3.png')
-playerImgWR4 = pygame.image.load('pc_wr4.png')
-playerImgWR5 = pygame.image.load('pc_wr5.png')
-playerImgWR6 = pygame.image.load('pc_wr6.png')
+playerImgWL = [pygame.image.load('pc_wl1.png'),pygame.image.load('pc_wl2.png'),pygame.image.load('pc_wl3.png'),pygame.image.load('pc_wl4.png'),pygame.image.load('pc_wl5.png'),pygame.image.load('pc_wl6.png')]
+playerImgWR = [pygame.image.load('pc_wr1.png'),pygame.image.load('pc_wr2.png'),pygame.image.load('pc_wr3.png'),pygame.image.load('pc_wr4.png'),pygame.image.load('pc_wr5.png'),pygame.image.load('pc_wr6.png')]
 playerImgAPR = pygame.image.load('pc_mpr6.png')
 playerImgAPL = pygame.image.load('pc_mpl6.png')
 playerImgASR = pygame.image.load('pc_msnl6.png')
@@ -61,7 +56,7 @@ class Level:
 
         bullets = [] ## Keeps track of each bullet
         enemies = [] ## Keeps track of each enemy
-        spawnRate = 122 - (2 * level)
+        spawnRate = 122 - (2 * level) ##Subject to change
         kills = 0
         
         ##Allows control customization and some tweaks would allow multiplayer
@@ -142,16 +137,17 @@ class Level:
                         
             ##Boarder Testing and Moving
             if player.movingR:
-                if player.dx < 4:
-                    player.dx += 1
+                if player.dx < MAX_SPEED:
+                    player.dx += SLIDE_DISTANCE
             if player.movingL:
-                if player.dx > -4:
-                    player.dx -= 1
+                if player.dx > (-1) * MAX_SPEED:
+                    player.dx -= SLIDE_DISTANCE
             if not player.movingR and not player.movingL:
                 if player.dx > 0:
-                    player.dx -= 1
+                    player.dx -= SLIDE_DISTANCE
                 elif player.dx < 0:
-                    player.dx += 1
+                    player.dx += SLIDE_DISTANCE
+                    
             if player.playerX < 2 and pygame.key.get_pressed()[pygame.K_a]:
                 player.playerX = 0
             elif player.playerX > display_width - 34 and pygame.key.get_pressed()[pygame.K_d]:
@@ -159,50 +155,24 @@ class Level:
             else:
                 player.playerX += player.dx
                 
-            ##Walk Left Cycle     
-            if player.walkingR < 2 and player.walkingR >= 1:
-                player.playerS = playerImgWR1
-                player.walkingR+=.2
-            elif player.walkingR < 3 and player.walkingR >= 1:
-                player.playerS = playerImgWR2
-                player.walkingR+=.2
-            elif player.walkingR < 4 and player.walkingR >= 1:
-                player.playerS = playerImgWR3
-                player.walkingR+=.2
-            elif player.walkingR < 5 and player.walkingR >= 1:
-                player.playerS = playerImgWR4
-                player.walkingR+=.2
-            elif player.walkingR < 6 and player.walkingR >= 1:
-                player.playerS = playerImgWR5
-                player.walkingR+=.2 
-            elif player.walkingR < 7 and player.walkingR >= 1:
-                player.walkingR = 1
-                player.playerS = playerImgWR6
+            ##Walk Right Cycle     
+            if player.movingR:
+                player.walkingR += .2
+                if player.walkingR >= 7:
+                    player.walkingR = 1
+                player.playerS = playerImgWR[walkRound(player.walkingR)-1]
                 
-            ##Walk Right Cycle    
-            elif player.walkingL < 2 and player.walkingL >= 1:
-                player.playerS = playerImgWL1
-                player.walkingL+=.2
-            elif player.walkingL < 3 and player.walkingL >= 1:
-                player.playerS = playerImgWL2
-                player.walkingL+=.2
-            elif player.walkingL < 4 and player.walkingL >= 1:
-                player.playerS = playerImgWL3
-                player.walkingL+=.2
-            elif player.walkingL < 5 and player.walkingL >= 1:
-                player.playerS = playerImgWL4
-                player.walkingL+=.2
-            elif player.walkingL < 6 and player.walkingL >= 1:
-                player.playerS = playerImgWL5
-                player.walkingL+=.2
-            elif player.walkingL < 7 and player.walkingL >= 1:
-                player.walkingL = 1
-                player.playerS = playerImgWL6
+            ##Walk Left Cycle    
+            if player.movingL:
+                player.walkingL += .2
+                if player.walkingL >= 7:
+                    player.walkingL = 1
+                player.playerS = playerImgWL[walkRound(player.walkingL)-1]
                 
             ##Jump Cycle    
             player.playerY -= player.dy
             if player.playerY < 368:
-                player.dy -= gravity/60 ##Accelaration due to gravity per tick(change to affect gravity)
+                player.dy -= GRAVITY/60 ##Accelaration due to gravity per frame(change to affect gravity)
             if player.playerY > 368:
                 player.playerY = 368
             if player.playerY == 368:
@@ -505,6 +475,22 @@ def suf(x,d):
         cost = "NaN"
         suf = ""
     return(str(round(x,d)) + suf)
+
+##Figures Out What Walk Cycle To Be On
+def walkRound(x):
+    if x < 2:
+        return 1
+    elif x < 3:
+        return 2
+    elif x < 4:
+        return 3
+    elif x < 5:
+        return 4
+    elif x < 6:
+        return 5
+    elif x < 7:
+        return 6
+    
 
 ##Clicker Bar Buttons
 def button(name, x, number, cost):    

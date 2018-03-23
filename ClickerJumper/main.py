@@ -16,7 +16,7 @@ bright_green = (0,255,0)
 bright_red = (255,0,0)
 brown = (204,153,51)
 
-gravity = 18
+gravity = 10
 
 playerImgL = pygame.image.load('pc_fl.png')
 playerImgR = pygame.image.load('pc_fr.png')
@@ -522,4 +522,4 @@ def button(name, x, number, cost):
     gameDisplay.blit(textSurf, textRect)
 
 ##l = int(input("What Level Would You Like To Start At?"))
-start = Level(1,1,1,0,10000000000,0,0,0,0,0,0,0)
+start = Level(1,1,1,0,0,0,0,0,0,0,0,0)

@@ -311,17 +311,19 @@ class Level:
             for enemy in enemies:
                 enemy.draw(player)
                 
+            
+                    
+            ##What Happens if Enemy Collides With Player
+            for enemy in enemies:
+                if enemy.testForHit(player) == True:
+                    player.health -= 10 * level
+
             ##Tests For Dead Enemies
             for enemy in enemies:
                 if enemy.testForDead():
                     kills += 1
                     gold += 10 * l
                     enemies.remove(enemy)
-                    
-            ##What Happens if Enemy Collides With Player
-            for enemy in enemies:
-                if enemy.testForHit(player) == True:
-                    player.health -= 10 * level
 
             ##What Happensif Enemy Collides With a Bullet
                 for enemy in enemies:
@@ -396,17 +398,17 @@ class Player:
 class Enemy:
     def __init__(self,l,s):
         self.side = s               ##Intitail side for player (-1 or 1)
-        self.move = 2               ##
+        self.move = 2               ##Speed of enemy
 
         if s == 0:
-            self.img = enr
+            self.img = enr          ##Sprite for the enemy
         else:
             self.img = enl
             
-        self.health = 10 * l
-        self.x = s*display_width
-        self.y = 368
-        self.width = 16
+        self.health = 10 * l        ##Health of the enemy
+        self.x = s*display_width    ##X Cord of enemy
+        self.y = 368                ##Y cord of enemy
+        self.width = 16             ##Width of enemy
 
     #Draws Enemy
     def draw(self,player):
@@ -439,23 +441,22 @@ class Enemy:
 
 ##Bullet Class        
 class Bullet:
-    
+    ##Initializes Bullet properties
     def __init__(self,player):
-        self.d = player.face
-        self.y = player.playerY + 8
+        self.d = player.face                            ##Direction of bullet
+        self.y = player.playerY + 8                     ##Y Cord of bullet
         if self.d == "Right":
-            self.x = player.playerX + player.width + 2
-            self.m = 8
+            self.x = player.playerX + player.width + 2  ##X Cord of bullet
+            self.m = 8                                  ##Speed of bullet
         else:
             self.x = player.playerX - 2 -2
             self.m = - 8
-            
+    ##Draws the bullet
     def draw(self):
        pygame.draw.rect(gameDisplay, black,(self.x,self.y,2,2))
        self.x += self.m
-
+    ##Tests for bullet off screen
     def testForOff(self):
-        print(self.x)
         if self.x - 2 < 0 or self.x > display_width:
             return True
         return False
@@ -467,7 +468,7 @@ def text_objects(text, font, color):
     textSurface = font.render(text, True, color)
     return textSurface, textSurface.get_rect()
 
-#Shortens Numbers
+#Shortens Numbers (Can impliment more)
 def suf(x,d):
     for i in range(0,5):
         if x >= 1000:
@@ -507,4 +508,4 @@ def button(name, x, number, cost):
     gameDisplay.blit(textSurf, textRect)
 
 ##l = int(input("What Level Would You Like To Start At?"))
-start = Level(1,1,1,0,100000,0,0,0,0,0,0,0)
+start = Level(1,1,1,0,0,0,0,0,0,0,0,0)

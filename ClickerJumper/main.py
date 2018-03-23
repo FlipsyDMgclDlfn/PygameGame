@@ -111,25 +111,26 @@ class Level:
                             player.inAir = True
                             
                     if event.key == player.left:
+                        player.movingL = True
                         player.face = "Left"
-                        player.dx = -4
                         player.walkingL = 1
                         
                     elif event.key == player.right:
+                        player.movingR = True
                         player.face = "Right"
-                        player.dx = 4
                         player.walkingR = 1
                         
                 elif event.type == pygame.KEYUP:
-                    player.dx = 0
                     
                     if event.key == player.left:
+                        player.movingL = False
                         player.playerS = playerImgL
                         player.face = "Left"
                         player.walking = False
                         player.walkingL = 0
                         
                     if event.key == player.right:
+                        player.movingR = False
                         player.playerS = playerImgR
                         player.face = "Right"
                         player.walking = False
@@ -139,7 +140,18 @@ class Level:
                     if event.key == player.shoot:
                         bullets += [Bullet(player)]
                         
-            ##Boarder Testing and Moving           
+            ##Boarder Testing and Moving
+            if player.movingR:
+                if player.dx < 4:
+                    player.dx += 1
+            if player.movingL:
+                if player.dx > -4:
+                    player.dx -= 1
+            if not player.movingR and not player.movingL:
+                if player.dx > 0:
+                    player.dx -= 1
+                elif player.dx < 0:
+                    player.dx += 1
             if player.playerX < 2 and pygame.key.get_pressed()[pygame.K_a]:
                 player.playerX = 0
             elif player.playerX > display_width - 34 and pygame.key.get_pressed()[pygame.K_d]:
@@ -385,6 +397,8 @@ class Player:
         self.inAir = False              ##Indicates in player is in the air or not
         self.maxHealth = 100            ##Max Health for the player
         self.health = self.maxHealth    ##Current Health for the player
+        self.movingL = False            ##Indicates if the player is moving left
+        self.movingR = False            ##Indicates if the player is moving right
         self.walking = False            ##Indicates if the player is walking or not
         self.walkingL = 0               ##Frame number for walking left
         self.walkingR = 0               ##Frame number for walking right

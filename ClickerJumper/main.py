@@ -160,14 +160,14 @@ class Level:
                 player.walkingR += .2
                 if player.walkingR >= 7:
                     player.walkingR = 1
-                player.playerS = playerImgWR[walkRound(player.walkingR)-1]
+                player.playerS = playerImgWR[math.floor(player.walkingR)-1]
                 
             ##Walk Left Cycle    
             if player.movingL:
                 player.walkingL += .2
                 if player.walkingL >= 7:
                     player.walkingL = 1
-                player.playerS = playerImgWL[walkRound(player.walkingL)-1]
+                player.playerS = playerImgWL[math.floor(player.walkingL)-1]
                 
             ##Jump Cycle    
             player.playerY -= player.dy
@@ -291,9 +291,7 @@ class Level:
                 
             #Draws Enemies
             for enemy in enemies:
-                enemy.draw(player)
-                
-            
+                enemy.draw(player)            
                     
             ##What Happens if Enemy Collides With Player
             for enemy in enemies:
@@ -394,7 +392,7 @@ class Enemy:
         self.y = 368                ##Y cord of enemy
         self.width = 16             ##Width of enemy
 
-    #Draws Enemy
+    #Draws Enemy and figures which way to move
     def draw(self,player):
         if self.x > player.playerX:
             self.x -= self.move
@@ -475,22 +473,6 @@ def suf(x,d):
         cost = "NaN"
         suf = ""
     return(str(round(x,d)) + suf)
-
-##Figures Out What Walk Cycle To Be On
-def walkRound(x):
-    if x < 2:
-        return 1
-    elif x < 3:
-        return 2
-    elif x < 4:
-        return 3
-    elif x < 5:
-        return 4
-    elif x < 6:
-        return 5
-    elif x < 7:
-        return 6
-    
 
 ##Clicker Bar Buttons
 def button(name, x, number, cost):    

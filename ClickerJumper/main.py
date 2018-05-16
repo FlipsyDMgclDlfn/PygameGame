@@ -41,6 +41,10 @@ enl = pygame.image.load('en_l.png')
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 clock = pygame.time.Clock()
 
+##Music (Bensound's Epic)
+pygame.mixer.music.load("bensound-epic.mp3")
+pygame.mixer.music.play(-1)
+
 class Level:
     ##Level Num, Power, Power Per Click, Power PS, Gold, Num Of Each Helper
     def __init__(self,l,p,pinc,pps,g,h1,h2,h3,h4,h5,h6,h7):
